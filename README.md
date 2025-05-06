@@ -2,6 +2,18 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+This application uses VisualCrossing Weather API. Create
+```
+.env.local
+```
+file and set variable
+```
+NEXT_PUBLIC_VISUALCROSSING_API_KEY=
+```
+to your personal VisualCrossing API key (see Getting API key section below)
+
+## Running the application
+
 First, run the development server:
 
 ```bash
@@ -16,22 +28,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
 ## PWA
 
 Install app using (icon may vary between browsers):
 
 ![alt text](image-1.png)
 
-## Learn More
+## Getting API key 
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Sign in to 
+```
+https://www.visualcrossing.com/
+```
+After that your API key can be found in account details
 
