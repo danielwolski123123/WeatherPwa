@@ -2,6 +2,17 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Follow instruction to install Node.js and npm
+```
+https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+```
+
+Install next
+
+```
+npm install next
+```
+
 This application uses VisualCrossing Weather API. Create
 ```
 .env.local
@@ -14,7 +25,7 @@ to your personal VisualCrossing API key (see Getting API key section below)
 
 ## Running the application
 
-First, run the development server:
+Then, run the development server:
 
 ```bash
 npm run dev
