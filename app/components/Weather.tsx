@@ -13,7 +13,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { WeatherData } from '../models/weather';
+import { WeatherData, ForecastData } from '../models/weather';
 
 ChartJS.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
 
@@ -21,6 +21,7 @@ export default function Weather() {
   const [city, setCity] = useState('');
   const [date, setDate] = useState('');
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [forecastData, setForecastData] = useState<ForecastData | null>(null);
   const [error, setError] = useState('');
 
   const apiKey = process.env.NEXT_PUBLIC_VISUALCROSSING_API_KEY;
@@ -32,61 +33,78 @@ export default function Weather() {
       );
       setWeatherData(res.data);
       setError('');
+
+      const forecastRes = await axios.get(
+        `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?key=${apiKey}&unitGroup=metric&include=days`
+      );
+      setForecastData({ days: forecastRes.data.days.slice(0, 5) });
     } catch (err) {
-      setError('Błąd przy pobieraniu danych.');
+      setError('Nie udało się pobrać danych pogodowych.');
+      console.error(err);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!city || !date) {
-      setError('Podaj miasto i datę.');
-      return;
-    }
-    fetchWeather();
-  };
-
-  
-  const chartData = weatherData?.days?.[0]?.hours
+  const chartData = weatherData
     ? {
         labels: weatherData.days[0].hours.map((hour) => hour.datetime),
         datasets: [
           {
             label: 'Temperatura (°C)',
             data: weatherData.days[0].hours.map((hour) => hour.temp),
-            fill: false,
             borderColor: 'rgb(75, 192, 192)',
-            tension: 0.1,
+            fill: false,
           },
         ],
       }
     : null;
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full max-w-md">
-      <h2 className="text-xl font-bold">Sprawdź pogodę</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full">
+    <div className="p-4 max-w-2xl mx-auto text-center">
+      <h1 className="text-3xl font-bold mb-4 text-white">Pogoda</h1>
+      <div className="mb-4 flex justify-center gap-2">
         <input
-          className="border p-2 rounded"
           type="text"
           placeholder="Miasto"
           value={city}
           onChange={(e) => setCity(e.target.value)}
+          className="border p-2 rounded"
         />
         <input
-          className="border p-2 rounded"
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
+          className="border p-2 rounded"
         />
-        <button type="submit" className="bg-black text-white p-2 rounded hover:bg-gray-800">
-          Pobierz pogodę
+        <button onClick={fetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded">
+          Pobierz
         </button>
-      </form>
-      {error && <p className="text-green-500">{error}</p>}
+      </div>
+      {error && <p className="text-red-500">{error}</p>}
       {chartData && (
-        <div className="w-full h-[400px] mt-4">
+        <div className="my-8 bg-white rounded-xl shadow-lg p-4">
           <Line data={chartData} />
+        </div>
+      )}
+      {forecastData && (
+        <div>
+          <h2 className="text-2xl font-semibold my-4 text-white">Prognoza na kolejne dni</h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {forecastData.days.map((day, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-lg p-4 text-gray-800 flex flex-col items-center"
+              >
+                <p className="font-semibold text-lg mb-2">{day.datetime}</p>
+                <img
+                  src={`https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${day.icon}.png`}
+                  alt={day.icon}
+                  className="h-12 my-2"
+                />
+                <p className="text-red-500 font-medium">🌡 Max: {day.tempmax}°C</p>
+                <p className="text-blue-500 font-medium">🌡 Min: {day.tempmin}°C</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
