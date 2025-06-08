@@ -4,6 +4,10 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 const nextConfig = {
   reactStrictMode: true,
+  output: 'export',
+  images: {
+    unoptimized: true
+  }
 };
 
 module.exports = withPWA(nextConfig);

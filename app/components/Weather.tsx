@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import {
@@ -24,8 +24,25 @@ export default function Weather() {
   const [forecastData, setForecastData] = useState<ForecastData | null>(null);
   const [error, setError] = useState('');
   const [darkMode, setDarkMode] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
   const apiKey = process.env.NEXT_PUBLIC_VISUALCROSSING_API_KEY;
+
+  useEffect(() => {
+    setIsClient(true);
+    // Load saved data
+    const savedCity = localStorage.getItem('lastCity');
+    const savedDate = localStorage.getItem('lastDate');
+    const savedWeatherData = localStorage.getItem('lastWeatherData');
+    const savedForecastData = localStorage.getItem('lastForecastData');
+    const savedDarkMode = localStorage.getItem('darkMode');
+
+    if (savedCity) setCity(savedCity);
+    if (savedDate) setDate(savedDate);
+    if (savedWeatherData) setWeatherData(JSON.parse(savedWeatherData));
+    if (savedForecastData) setForecastData(JSON.parse(savedForecastData));
+    if (savedDarkMode) setDarkMode(savedDarkMode === 'true');
+  }, []);
 
   const fetchWeather = async () => {
     try {
@@ -33,15 +50,32 @@ export default function Weather() {
         `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date}?key=${apiKey}&unitGroup=metric`
       );
       setWeatherData(res.data);
+      if (isClient) {
+        localStorage.setItem('lastWeatherData', JSON.stringify(res.data));
+        localStorage.setItem('lastCity', city);
+        localStorage.setItem('lastDate', date);
+      }
       setError('');
 
       const forecastRes = await axios.get(
         `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?key=${apiKey}&unitGroup=metric&include=days`
       );
-      setForecastData({ days: forecastRes.data.days.slice(0, 5) });
+      const forecastData = { days: forecastRes.data.days.slice(0, 5) };
+      setForecastData(forecastData);
+      if (isClient) {
+        localStorage.setItem('lastForecastData', JSON.stringify(forecastData));
+      }
     } catch (err) {
       setError('Nie udało się pobrać danych pogodowych.');
-      console.error(err);
+      console.error('Error fetching weather:', err);
+    }
+  };
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    if (isClient) {
+      localStorage.setItem('darkMode', newDarkMode.toString());
     }
   };
 
@@ -66,9 +100,9 @@ export default function Weather() {
       } min-h-screen p-4 transition-colors duration-300`}
     >
       <div className="max-w-2xl mx-auto text-center">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-4 gap-2">
           <button
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={toggleDarkMode}
             className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600"
           >
             {darkMode ? 'Tryb jasny ☀️' : 'Tryb ciemny 🌙'}

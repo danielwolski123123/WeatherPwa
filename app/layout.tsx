@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My PWA App",
+  title: "",
   description: "Progressive Web App built with Next.js",
   manifest: "/manifest.json",
   icons: {
