@@ -17,7 +17,7 @@ This application uses VisualCrossing Weather API. Create
 ```
 .env.local
 ```
-file and set variable
+file and set variable (exemplary token is already hardcoded in Weather.tsx)
 ```
 NEXT_PUBLIC_VISUALCROSSING_API_KEY=
 ```
@@ -41,9 +41,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## PWA
 
+![](image.png)
+
 Install app using (icon may vary between browsers):
 
 ![alt text](image-1.png)
+
+You can also pin it to taskbar
+
+![alt text](image-2.png)
+
+![alt text](image-3.png)
 
 ## Getting API key 
 

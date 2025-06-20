@@ -26,7 +26,8 @@ export default function Weather() {
   const [darkMode, setDarkMode] = useState(true);
   const [isClient, setIsClient] = useState(false);
 
-  const apiKey = process.env.NEXT_PUBLIC_VISUALCROSSING_API_KEY;
+  // const apiKey = process.env.NEXT_PUBLIC_VISUALCROSSING_API_KEY; //uncomment and put your token in .env.local file
+  const apiKey = "4KW8V65NH4XXKEK2YV8T4P25D";
 
   useEffect(() => {
     setIsClient(true);
